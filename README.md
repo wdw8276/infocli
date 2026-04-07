@@ -1,0 +1,3 @@
+# infocli
+
+alias to infoctl
