@@ -3,9 +3,11 @@ package main
 import (
 	"fmt"
 	"infocli/utils"
+	"strings"
 
 	"github.com/glebarez/sqlite"
 	"gorm.io/gorm"
+	gormLogger "gorm.io/gorm/logger"
 )
 
 // Info is the ORM model for the info table
@@ -23,7 +25,9 @@ func InitDB() {
 	} else {
 		logger.Println("load db file:", gDbFile)
 	}
-	gDb, gErr = gorm.Open(sqlite.Open(gDbFile), &gorm.Config{})
+	gDb, gErr = gorm.Open(sqlite.Open(gDbFile), &gorm.Config{
+		Logger: gormLogger.Default.LogMode(gormLogger.Silent),
+	})
 	if gErr != nil {
 		logger.Fatalln(gErr)
 	}
@@ -46,6 +50,10 @@ func SaveInfo(name string, data string) error {
 
 	gRet = gDb.Create(&info)
 	if gRet.Error != nil {
+		if strings.Contains(gRet.Error.Error(), "UNIQUE constraint failed") {
+			logger.Println("record already exists:", name)
+			return nil
+		}
 		logger.Fatalln(gRet.Error)
 	}
 	logger.Println("create record:", info.Name, "ok")
