@@ -72,7 +72,23 @@ test: dev
 	echo "--- count ---"; \
 	$$BIN -f $$DB c; \
 	rm -f $$DB; \
-	echo "--- test done ---"
+	echo "--- test done ---"; \
+	echo ""; \
+	echo "=== encrypt test ==="; \
+	EDB=/tmp/$(APP_NAME)-enc-test.db; \
+	rm -f $$EDB; \
+	echo "--- add with key ---"; \
+	$$BIN -f $$EDB -k secret a server1 "192.168.1.1"; \
+	$$BIN -f $$EDB -k secret a server2 "192.168.1.2"; \
+	$$BIN -f $$EDB -k secret a other "not a server"; \
+	echo "--- fuzzy query with key (decrypted) ---"; \
+	$$BIN -f $$EDB -k secret q name server; \
+	echo "--- fuzzy query without key (raw encrypted) ---"; \
+	$$BIN -f $$EDB q name server; \
+	echo "--- query with wrong key (raw encrypted) ---"; \
+	$$BIN -f $$EDB -k wrongkey q name server; \
+	rm -f $$EDB; \
+	echo "--- encrypt test done ---"
 
 clean:
 	rm -rf $(BUILD_DIR)

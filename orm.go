@@ -44,6 +44,14 @@ func InitDB() {
 }
 
 func SaveInfo(name string, data string) error {
+	if gKey != "" {
+		encrypted, err := utils.Encrypt(data, gKey)
+		if err != nil {
+			logger.Fatalln("encrypt failed:", err)
+		}
+		data = encrypted
+	}
+
 	var info = Info{
 		Name: name,
 		Data: data,

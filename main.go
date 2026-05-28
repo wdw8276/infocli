@@ -10,7 +10,6 @@ import (
 
 	"gorm.io/gorm"
 )
-
 const ()
 
 var (
@@ -19,6 +18,7 @@ var (
 	// global flags
 	gDbFile      string
 	gID          int
+	gKey         string
 	gShowDetail  bool
 	gShowVersion bool
 	gDebug       bool
@@ -58,6 +58,7 @@ func main() {
 	rootCmd.PersistentFlags().BoolVarP(&gShowDetail, "detail", "d", false, "show detail data")
 	rootCmd.PersistentFlags().BoolVarP(&gShowVersion, "version", "v", false, "show version")
 	rootCmd.PersistentFlags().BoolVarP(&gDebug, "debug", "D", false, "enable debug mode")
+	rootCmd.PersistentFlags().StringVarP(&gKey, "key", "k", os.Getenv("INFOCLI_KEY"), "encryption key (or set INFOCLI_KEY env)")
 
 	// add sub commands
 	rootCmd.AddCommand(versionCmd)

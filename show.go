@@ -8,6 +8,17 @@ import (
 	"github.com/bndr/gotabulate"
 )
 
+func decryptData(data string) string {
+	if gKey == "" {
+		return data
+	}
+	result, err := utils.Decrypt(data, gKey)
+	if err != nil {
+		return data
+	}
+	return result
+}
+
 func ShowTable(infos *[]Info, isSimple bool) {
 	logger.Println("show detail:", gShowDetail)
 
@@ -28,9 +39,9 @@ func ShowTable(infos *[]Info, isSimple bool) {
 		for _, v := range *infos {
 			var row []interface{}
 			if gShowDetail {
-				row = []interface{}{v.ID, v.Name, v.Data, time.Unix(v.Created, 0).Format("2006-01-02 15:04:05"), time.Unix(v.Updated, 0).Format("2006-01-02 15:04:05")}
+				row = []interface{}{v.ID, v.Name, decryptData(v.Data), time.Unix(v.Created, 0).Format("2006-01-02 15:04:05"), time.Unix(v.Updated, 0).Format("2006-01-02 15:04:05")}
 			} else {
-				row = []interface{}{v.Name, v.Data}
+				row = []interface{}{v.Name, decryptData(v.Data)}
 			}
 			tb = utils.Append(tb, row).([][]interface{})
 		}
