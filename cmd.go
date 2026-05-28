@@ -23,7 +23,7 @@ func init() {
 
 var rootCmd = &cobra.Command{
 	Use:   "infocli",
-	Short: "A simple tool to store and query data, based on sqlite3.\nAuthor: diwen @Copyright 2024",
+	Short: "A simple tool to store and query data, based on sqlite3.",
 	Run: func(cmd *cobra.Command, args []string) {
 		logger.Println("Welcome to infocli! -h for help.")
 	},

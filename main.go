@@ -1,7 +1,6 @@
 package main
 
 // Time    :   2024-06-04 02:02:00 PM
-// Author  :   diwen
 
 import (
 	"fmt"
