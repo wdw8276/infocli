@@ -8,7 +8,7 @@ LINUX_OUTPUT      := $(BUILD_DIR)/$(APP_NAME)
 MACOS_AMD64_OUTPUT := $(BUILD_DIR)/$(APP_NAME)-darwin-amd64
 MACOS_ARM64_OUTPUT := $(BUILD_DIR)/$(APP_NAME)-darwin-arm64
 
-.PHONY: all dev linux darwin-amd64 darwin-arm64 install clean fmt tidy
+.PHONY: all dev linux darwin-amd64 darwin-arm64 install release clean fmt tidy
 
 all: linux darwin-amd64 darwin-arm64
 
@@ -42,6 +42,11 @@ install:
 		sudo cp $(LINUX_OUTPUT) /usr/local/bin/$(APP_NAME); \
 	fi
 	@echo "Installed $(APP_NAME) $(VERSION) to /usr/local/bin/$(APP_NAME)."
+
+release: all
+	git tag $(VERSION)
+	git push origin $(VERSION)
+	@echo "Released $(VERSION)."
 
 clean:
 	rm -rf $(BUILD_DIR) $(APP_NAME)
