@@ -78,6 +78,11 @@ infocli -i 1 d
 
 # Count all records
 infocli c
+
+# Use a custom database file
+infocli -f /path/to/custom.db init
+infocli -f /path/to/custom.db a mykey "value"
+infocli -f /path/to/custom.db q mykey
 ```
 
 ## Development
