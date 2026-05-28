@@ -5,8 +5,11 @@ A simple CLI tool to store and query text records, backed by SQLite.
 ## Install
 
 ```bash
-go build -o infocli .
+make install
 ```
+
+Auto-detects the current OS and architecture (Linux, macOS amd64/arm64),
+builds the binary, and installs it to `/usr/local/bin/infocli`.
 
 Default database file: `~/.<username>.db` (e.g. `~/.fish.db`)
 
