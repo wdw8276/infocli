@@ -15,16 +15,16 @@ import (
 const ()
 
 var (
-	logger = utils.Logger // 日志对象
+	logger = utils.Logger // logger instance
 
-	// global flags 命令行参数
+	// global flags
 	gDbFile      string
 	gID          int
 	gShowDetail  bool
 	gShowVersion bool
 	gDebug       bool
 
-	// global variables 数据库相关
+	// global variables
 	gDb  *gorm.DB
 	gErr error
 	gRet *gorm.DB
@@ -50,9 +50,8 @@ func main() {
 		logger.Fatalln(err)
 	}
 
-	// default db file
-	defaultDb := user.HomeDir + "/." + user.Username + ".db" // like: ~/.fish.db
-	// logger.Println("default db file:", defaultDb)
+	// default db file: like ~/.fish.db
+	defaultDb := user.HomeDir + "/." + user.Username + ".db"
 
 	// add global flags
 	rootCmd.PersistentFlags().StringVarP(&gDbFile, "file", "f", defaultDb, "database file")
@@ -62,16 +61,10 @@ func main() {
 	rootCmd.PersistentFlags().BoolVarP(&gDebug, "debug", "D", false, "enable debug mode")
 
 	// add sub commands
-	// 打印版本信息
 	rootCmd.AddCommand(versionCmd)
-
-	// 初始化db
 	rootCmd.AddCommand(initDbCmd)
-
-	// 增加一条记录
 	rootCmd.AddCommand(addCmd)
 
-	// 查询数据 支持根据name、data、id 字段查询
 	nameCmd.Flags().BoolVarP(&gShowDetail, "detail", "d", false, "show detail data")
 	dataCmd.Flags().BoolVarP(&gShowDetail, "detail", "d", false, "show detail data")
 	idCmd.Flags().BoolVarP(&gShowDetail, "detail", "d", false, "show detail data")
@@ -80,7 +73,6 @@ func main() {
 	queryCmd.AddCommand(idCmd)
 	rootCmd.AddCommand(queryCmd)
 
-	// 更新数据 包含根据id 和name 字段更新
 	updateNameCmd.Flags().IntVarP(&gID, "id", "i", 0, "input record id")
 	updateNameCmd.MarkFlagRequired("id")
 	updateDataCmd.Flags().IntVarP(&gID, "id", "i", 0, "input record id")
@@ -89,15 +81,12 @@ func main() {
 	updateCmd.AddCommand(updateDataCmd)
 	rootCmd.AddCommand(updateCmd)
 
-	// 删除一条记录
 	deleteCmd.Flags().IntVarP(&gID, "id", "i", 0, "input record id")
 	deleteCmd.MarkFlagRequired("id")
 	rootCmd.AddCommand(deleteCmd)
 
-	// 统计行数
 	rootCmd.AddCommand(countCmd)
 
-	// 执行命令行
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Println(err)
 		os.Exit(1)

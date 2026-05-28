@@ -27,7 +27,7 @@ func Append(slice interface{}, item interface{}) interface{} {
   return v.Interface()
 }
 
-// NOTE: 字符串和int数组，删除和替换，返回新的数组
+// NOTE: delete and replace items in string/int slices, returns a new slice
 func DelStringArrayItem(slice []string, item string) []string {
   l := make([]string, 0)
   for _, v := range slice {

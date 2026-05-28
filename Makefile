@@ -4,24 +4,20 @@ VERSION   := $(shell grep 'gVersion' version.go | grep -oP 'v[\d.]+')
 
 LDFLAGS := -ldflags '-extldflags "-static" -s -w -X main.gVersion=$(VERSION)'
 
-WINDOWS_OUTPUT    := $(BUILD_DIR)/$(APP_NAME).exe
 LINUX_OUTPUT      := $(BUILD_DIR)/$(APP_NAME)-linux
 MACOS_AMD64_OUTPUT := $(BUILD_DIR)/$(APP_NAME)-darwin-amd64
 MACOS_ARM64_OUTPUT := $(BUILD_DIR)/$(APP_NAME)-darwin-arm64
 
-.PHONY: all dev windows linux darwin-amd64 darwin-arm64 install clean fmt tidy
+.PHONY: all dev linux darwin-amd64 darwin-arm64 install clean fmt tidy
 
-all: windows linux darwin-amd64 darwin-arm64
+all: linux darwin-amd64 darwin-arm64
 
-# 本地快速构建（当前平台）
+# local quick build for current platform
 dev:
 	go build -o $(APP_NAME) .
 
 $(BUILD_DIR):
 	mkdir -p $(BUILD_DIR)
-
-windows: $(BUILD_DIR)
-	CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -a $(LDFLAGS) -o $(WINDOWS_OUTPUT)
 
 linux: $(BUILD_DIR)
 	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a $(LDFLAGS) -o $(LINUX_OUTPUT)

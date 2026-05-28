@@ -15,7 +15,7 @@ import (
 
 type GracefulExitCallback func() error
 
-func AddGracefulExit(fn GracefulExitCallback) { // 编译build后运行 信号捕获就会正常接收了
+func AddGracefulExit(fn GracefulExitCallback) {
 	sig := make(chan os.Signal, 1)
 	signal.Notify(sig, syscall.SIGTERM) // 15
 	signal.Notify(sig, syscall.SIGINT)  // 2 ctrl+c
