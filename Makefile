@@ -88,7 +88,37 @@ test: dev
 	echo "--- query with wrong key (raw encrypted) ---"; \
 	$$BIN -f $$EDB -k wrongkey q name server; \
 	rm -f $$EDB; \
-	echo "--- encrypt test done ---"
+	echo "--- encrypt test done ---"; \
+	echo ""; \
+	echo "=== mixed plaintext + encrypted test ==="; \
+	MDB=/tmp/$(APP_NAME)-mixed-test.db; \
+	rm -f $$MDB; \
+	$$BIN -f $$MDB a plain1 "hello"; \
+	$$BIN -f $$MDB a plain2 "world"; \
+	$$BIN -f $$MDB -k secret a enc1 "secret data"; \
+	$$BIN -f $$MDB -k secret a enc2 "more secrets"; \
+	echo "--- query all with key (plaintext as-is, encrypted decrypted) ---"; \
+	$$BIN -f $$MDB -k secret q name ""; \
+	echo "--- query all without key (plaintext as-is, encrypted raw) ---"; \
+	$$BIN -f $$MDB q name ""; \
+	echo "--- q data plaintext keyword (matches plaintext only) ---"; \
+	$$BIN -f $$MDB q data hello; \
+	echo "--- q data encrypted keyword (no match, known limitation) ---"; \
+	$$BIN -f $$MDB -k secret q data secret; \
+	rm -f $$MDB; \
+	echo "--- mixed test done ---"; \
+	echo ""; \
+	echo "=== INFOCLI_KEY env var test ==="; \
+	XDB=/tmp/$(APP_NAME)-env-test.db; \
+	rm -f $$XDB; \
+	echo "--- add with INFOCLI_KEY ---"; \
+	INFOCLI_KEY=secret $$BIN -f $$XDB a mykey "hello env"; \
+	echo "--- query with INFOCLI_KEY (decrypted) ---"; \
+	INFOCLI_KEY=secret $$BIN -f $$XDB q name mykey; \
+	echo "--- query without env (raw encrypted) ---"; \
+	$$BIN -f $$XDB q name mykey; \
+	rm -f $$XDB; \
+	echo "--- env var test done ---"
 
 clean:
 	rm -rf $(BUILD_DIR)

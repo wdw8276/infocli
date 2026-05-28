@@ -32,6 +32,7 @@ infocli d -i 1      # flag after subcommand
 |------|-------|---------|-------------|
 | `--file` | `-f` | `~/.<user>.db` | Database file path |
 | `--id` | `-i` | `0` | Record ID (required for update/delete) |
+| `--key` | `-k` | `""` | Encryption key (or set `INFOCLI_KEY` env var) |
 | `--detail` | `-d` | false | Show full fields (ID, Created, Updated) |
 | `--debug` | `-D` | false | Enable debug mode |
 
@@ -84,6 +85,47 @@ infocli -f /path/to/custom.db init
 infocli -f /path/to/custom.db a mykey "value"
 infocli -f /path/to/custom.db q mykey
 ```
+
+## Encryption
+
+Data fields are encrypted with **AES-256-GCM** when a key is provided via `--key` / `-k` or the `INFOCLI_KEY` environment variable. Name fields are always stored in plaintext to preserve fuzzy search.
+
+```bash
+# Add encrypted records
+infocli -k mysecret a mykey "sensitive value"
+
+# Query (auto-decrypts with correct key)
+infocli -k mysecret q name mykey
+
+# Query without key (shows raw ciphertext)
+infocli q name mykey
+```
+
+### Mixed plaintext and encrypted records
+
+Plaintext and encrypted records can coexist in the same database:
+
+```bash
+infocli a plain "hello"             # stored as plaintext
+infocli -k secret a enc "secret"    # stored encrypted
+
+# Query all with key: plaintext shown as-is, encrypted decrypted
+infocli -k secret q name ""
+
+# Query all without key: plaintext shown as-is, encrypted shown as ciphertext
+infocli q name ""
+```
+
+### Bake the key into a shell alias
+
+```bash
+alias ic='INFOCLI_KEY=mysecret infocli'
+```
+
+### Limitations
+
+- `q data <keyword>` does **not** work for encrypted records — data is stored as ciphertext and cannot be fuzzy-matched by content.
+- A lost key means the data is unrecoverable.
 
 ## Development
 
