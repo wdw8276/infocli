@@ -4,7 +4,7 @@ VERSION   := $(shell grep 'gVersion' version.go | grep -oP 'v[\d.]+')
 
 LDFLAGS := -ldflags '-extldflags "-static" -s -w -X main.gVersion=$(VERSION)'
 
-LINUX_OUTPUT      := $(BUILD_DIR)/$(APP_NAME)-linux
+LINUX_OUTPUT      := $(BUILD_DIR)/$(APP_NAME)
 MACOS_AMD64_OUTPUT := $(BUILD_DIR)/$(APP_NAME)-darwin-amd64
 MACOS_ARM64_OUTPUT := $(BUILD_DIR)/$(APP_NAME)-darwin-arm64
 
@@ -29,10 +29,19 @@ darwin-amd64: $(BUILD_DIR)
 darwin-arm64: $(BUILD_DIR)
 	CGO_ENABLED=0 GOOS=darwin GOARCH=arm64 go build -a $(LDFLAGS) -o $(MACOS_ARM64_OUTPUT)
 
-install: linux
-	@echo "Installing $(APP_NAME) $(VERSION) to /usr/local/bin/$(APP_NAME)..."
-	@sudo cp $(LINUX_OUTPUT) /usr/local/bin/$(APP_NAME)
-	@echo "Done."
+install:
+	@OS=$$(uname -s); ARCH=$$(uname -m); \
+	if [ "$$OS" = "Darwin" ] && [ "$$ARCH" = "arm64" ]; then \
+		$(MAKE) darwin-arm64; \
+		sudo cp $(MACOS_ARM64_OUTPUT) /usr/local/bin/$(APP_NAME); \
+	elif [ "$$OS" = "Darwin" ]; then \
+		$(MAKE) darwin-amd64; \
+		sudo cp $(MACOS_AMD64_OUTPUT) /usr/local/bin/$(APP_NAME); \
+	else \
+		$(MAKE) linux; \
+		sudo cp $(LINUX_OUTPUT) /usr/local/bin/$(APP_NAME); \
+	fi
+	@echo "Installed $(APP_NAME) $(VERSION) to /usr/local/bin/$(APP_NAME)."
 
 clean:
 	rm -rf $(BUILD_DIR) $(APP_NAME)
