@@ -94,3 +94,37 @@ make all      # cross-compile for linux / darwin-amd64 / darwin-arm64
 make release  # build all platforms, tag and push version
 make clean    # remove build/
 ```
+
+## Shell Alias (Recommended)
+
+Add a short alias to your shell config for faster usage:
+
+**bash** (`~/.bashrc`):
+```bash
+alias ic='infocli'
+```
+
+**zsh** (`~/.zshrc`):
+```zsh
+alias ic='infocli'
+```
+
+**fish** (`~/.config/fish/config.fish`):
+```fish
+alias ic='infocli'
+```
+
+Then reload your shell (`source ~/.bashrc` / `source ~/.zshrc`) and use:
+
+```bash
+ic c                        # count records
+ic a mykey "some value"     # add
+ic q mykey                  # query
+ic d -i 1                   # delete
+```
+
+If you use a non-default database file, bake it into the alias:
+
+```bash
+alias ic='infocli -f ~/mydata.db'
+```
