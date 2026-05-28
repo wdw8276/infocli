@@ -2,6 +2,8 @@
 
 A simple CLI tool to store and query text records, backed by SQLite.
 
+Supports optional **AES-256-GCM encryption** for sensitive data — suitable for storing passwords, API keys, tokens, or any private information locally.
+
 ## Install
 
 ```bash
@@ -88,7 +90,7 @@ infocli -f /path/to/custom.db q mykey
 
 ## Encryption
 
-Data fields are encrypted with **AES-256-GCM** when a key is provided via `--key` / `-k` or the `INFOCLI_KEY` environment variable. Name fields are always stored in plaintext to preserve fuzzy search.
+For sensitive data (passwords, API keys, tokens, private notes), use the `--key` / `-k` flag or `INFOCLI_KEY` environment variable to enable **AES-256-GCM** encryption. Each record's data field is encrypted independently — name fields remain in plaintext to preserve fuzzy search.
 
 ```bash
 # Add encrypted records
