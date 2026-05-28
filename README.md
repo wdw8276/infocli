@@ -19,12 +19,19 @@ Default database file: `~/.<username>.db` (e.g. `~/.fish.db`)
 infocli [flags] <command>
 ```
 
+Global flags can be placed before or after the subcommand:
+
+```bash
+infocli -i 1 d      # flag before subcommand
+infocli d -i 1      # flag after subcommand
+```
+
 ### Global Flags
 
 | Flag | Short | Default | Description |
 |------|-------|---------|-------------|
 | `--file` | `-f` | `~/.<user>.db` | Database file path |
-| `--id` | `-i` | `0` | Record ID |
+| `--id` | `-i` | `0` | Record ID (required for update/delete) |
 | `--detail` | `-d` | false | Show full fields (ID, Created, Updated) |
 | `--debug` | `-D` | false | Enable debug mode |
 
@@ -65,9 +72,20 @@ infocli u data -i 1 "new value"
 # Update data from stdin
 cat new.txt | infocli u data -i 1
 
-# Delete by ID
+# Delete by ID (-i can be before or after subcommand)
 infocli d -i 1
+infocli -i 1 d
 
 # Count all records
 infocli c
+```
+
+## Development
+
+```bash
+make dev      # quick local build → build/infocli-dev
+make test     # build and run smoke tests
+make all      # cross-compile for linux / darwin-amd64 / darwin-arm64
+make release  # build all platforms, tag and push version
+make clean    # remove build/
 ```
