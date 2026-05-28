@@ -65,8 +65,10 @@ test: dev
 	$$BIN -f $$DB u data -i 1 "updated"; \
 	echo "--- query after update ---"; \
 	$$BIN -f $$DB q id 1; \
-	echo "--- delete ---"; \
+	echo "--- delete -i after subcommand ---"; \
 	$$BIN -f $$DB d -i 2; \
+	echo "--- delete -i before subcommand (id=1) ---"; \
+	$$BIN -f $$DB -i 1 d; \
 	echo "--- count ---"; \
 	$$BIN -f $$DB c; \
 	rm -f $$DB; \
