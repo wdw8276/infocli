@@ -135,6 +135,9 @@ var updateNameCmd = &cobra.Command{
 	Short: "Update name of record by id",
 	Args:  cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
+		if gID <= 0 {
+			logger.Fatalln("flag --id (-i) is required")
+		}
 		name := args[0]
 		UpdateName(strconv.Itoa(gID), name)
 	},
@@ -144,6 +147,9 @@ var updateDataCmd = &cobra.Command{
 	Use:   "data",
 	Short: "Update data of record by id",
 	Run: func(cmd *cobra.Command, args []string) {
+		if gID <= 0 {
+			logger.Fatalln("flag --id (-i) is required")
+		}
 		data := ""
 		if len(args) > 0 {
 			data = args[0]
@@ -165,6 +171,9 @@ var deleteCmd = &cobra.Command{
 	Use:   "d",
 	Short: "Delete data by id",
 	Run: func(cmd *cobra.Command, args []string) {
+		if gID <= 0 {
+			logger.Fatalln("flag --id (-i) is required")
+		}
 		DelInfo(strconv.Itoa(gID))
 	},
 }

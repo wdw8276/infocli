@@ -65,26 +65,16 @@ func main() {
 	rootCmd.AddCommand(initDbCmd)
 	rootCmd.AddCommand(addCmd)
 
-	nameCmd.Flags().BoolVarP(&gShowDetail, "detail", "d", false, "show detail data")
-	dataCmd.Flags().BoolVarP(&gShowDetail, "detail", "d", false, "show detail data")
-	idCmd.Flags().BoolVarP(&gShowDetail, "detail", "d", false, "show detail data")
 	queryCmd.AddCommand(nameCmd)
 	queryCmd.AddCommand(dataCmd)
 	queryCmd.AddCommand(idCmd)
 	rootCmd.AddCommand(queryCmd)
 
-	updateNameCmd.Flags().IntVarP(&gID, "id", "i", 0, "input record id")
-	updateNameCmd.MarkFlagRequired("id")
-	updateDataCmd.Flags().IntVarP(&gID, "id", "i", 0, "input record id")
-	updateDataCmd.MarkFlagRequired("id")
 	updateCmd.AddCommand(updateNameCmd)
 	updateCmd.AddCommand(updateDataCmd)
 	rootCmd.AddCommand(updateCmd)
 
-	deleteCmd.Flags().IntVarP(&gID, "id", "i", 0, "input record id")
-	deleteCmd.MarkFlagRequired("id")
 	rootCmd.AddCommand(deleteCmd)
-
 	rootCmd.AddCommand(countCmd)
 
 	if err := rootCmd.Execute(); err != nil {
