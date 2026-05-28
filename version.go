@@ -1,4 +1,4 @@
 package main
 
 var gName = "infocli"
-var gVersion = "v2.6"
+var gVersion = "v2.0"
