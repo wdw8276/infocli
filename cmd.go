@@ -14,6 +14,7 @@ func initConfig() {
 	if gShowVersion {
 		logger.Println(gName, gVersion)
 	}
+	InitDB()
 }
 
 func init() {

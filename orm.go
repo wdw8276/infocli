@@ -20,6 +20,9 @@ type Info struct {
 }
 
 func InitDB() {
+	if gDb != nil {
+		return
+	}
 	if !utils.FileExist(gDbFile) {
 		logger.Println("create db file:", gDbFile)
 	} else {
@@ -41,8 +44,6 @@ func InitDB() {
 }
 
 func SaveInfo(name string, data string) error {
-	InitDB()
-
 	var info = Info{
 		Name: name,
 		Data: data,
@@ -67,8 +68,6 @@ func DelInfo(id string) error {
 		logger.Fatalln("not a numeric, abort")
 	}
 
-	InitDB()
-
 	gRet = gDb.Delete(&Info{}, id)
 	if gRet.Error != nil {
 		logger.Fatalln(gRet.Error)
@@ -88,8 +87,6 @@ func UpdateName(id string, name string) error {
 		logger.Fatalln("not a numeric, abort")
 	}
 	logger.Println("Name:", name)
-
-	InitDB()
 
 	gRet = gDb.Model(&Info{}).Where("id = ?", id).Update("name", name)
 	if gRet.Error != nil {
@@ -111,8 +108,6 @@ func UpdateData(id string, data string) error {
 	}
 	logger.Println("Data:", data)
 
-	InitDB()
-
 	gRet = gDb.Model(&Info{}).Where("id = ?", id).Update("data", data)
 	if gRet.Error != nil {
 		logger.Fatalln(gRet.Error)
@@ -126,8 +121,6 @@ func UpdateData(id string, data string) error {
 }
 
 func QueryByID(id string) error {
-	InitDB()
-
 	var infos []Info
 	gRet = gDb.Where("id =?", id).Find(&infos)
 	if gRet.RowsAffected < 1 {
@@ -140,8 +133,6 @@ func QueryByID(id string) error {
 
 // QueryByNameOfSimple queries by name and shows only ID and Name columns
 func QueryByNameOfSimple(name string) error {
-	InitDB()
-
 	var infos []Info
 	like := fmt.Sprintf("%%%s%%", name)
 
@@ -155,8 +146,6 @@ func QueryByNameOfSimple(name string) error {
 }
 
 func QueryByName(name string) error {
-	InitDB()
-
 	var infos []Info
 	like := fmt.Sprintf("%%%s%%", name)
 
@@ -170,8 +159,6 @@ func QueryByName(name string) error {
 }
 
 func QueryByData(data string) error {
-	InitDB()
-
 	var infos []Info
 	like := fmt.Sprintf("%%%s%%", data)
 
@@ -185,16 +172,12 @@ func QueryByData(data string) error {
 }
 
 func QueryCount() int64 {
-	InitDB()
-
 	var count int64
 	_ = gDb.Model(&Info{}).Count(&count)
 	return count
 }
 
 func QueryLastUpdate() int64 {
-	InitDB()
-
 	var lastUpdate int64
 	_ = gDb.Model(&Info{}).Order("updated DESC").Limit(1).Pluck("updated", &lastUpdate).Error
 	return lastUpdate

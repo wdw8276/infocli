@@ -4,17 +4,18 @@ VERSION   := $(shell grep 'gVersion' version.go | grep -oP 'v[\d.]+')
 
 LDFLAGS := -ldflags '-extldflags "-static" -s -w -X main.gVersion=$(VERSION)'
 
+DEV_OUTPUT        := $(BUILD_DIR)/$(APP_NAME)-dev
 LINUX_OUTPUT      := $(BUILD_DIR)/$(APP_NAME)
 MACOS_AMD64_OUTPUT := $(BUILD_DIR)/$(APP_NAME)-darwin-amd64
 MACOS_ARM64_OUTPUT := $(BUILD_DIR)/$(APP_NAME)-darwin-arm64
 
-.PHONY: all dev linux darwin-amd64 darwin-arm64 install release clean fmt tidy
+.PHONY: all dev linux darwin-amd64 darwin-arm64 install release test clean fmt tidy
 
 all: linux darwin-amd64 darwin-arm64
 
 # local quick build for current platform
-dev:
-	go build -o $(APP_NAME) .
+dev: $(BUILD_DIR)
+	go build -o $(DEV_OUTPUT) .
 
 $(BUILD_DIR):
 	mkdir -p $(BUILD_DIR)
@@ -48,8 +49,31 @@ release: all
 	git push origin $(VERSION)
 	@echo "Released $(VERSION)."
 
+test: dev
+	@DB=/tmp/$(APP_NAME)-test.db; BIN=$(DEV_OUTPUT); \
+	rm -f $$DB; \
+	echo "--- add ---"; \
+	$$BIN -f $$DB a key1 "value1"; \
+	$$BIN -f $$DB a key2 "value2"; \
+	echo "--- duplicate ---"; \
+	$$BIN -f $$DB a key1 "dup"; \
+	echo "--- query name ---"; \
+	$$BIN -f $$DB q key; \
+	echo "--- query id ---"; \
+	$$BIN -f $$DB q id 1 -d; \
+	echo "--- update data ---"; \
+	$$BIN -f $$DB u data -i 1 "updated"; \
+	echo "--- query after update ---"; \
+	$$BIN -f $$DB q id 1; \
+	echo "--- delete ---"; \
+	$$BIN -f $$DB d -i 2; \
+	echo "--- count ---"; \
+	$$BIN -f $$DB c; \
+	rm -f $$DB; \
+	echo "--- test done ---"
+
 clean:
-	rm -rf $(BUILD_DIR) $(APP_NAME)
+	rm -rf $(BUILD_DIR)
 
 fmt:
 	go fmt ./...
